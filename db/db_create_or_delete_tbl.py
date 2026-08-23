@@ -1,13 +1,16 @@
 import psycopg2
 import random
 import string
+import os
 
+from dotenv import load_dotenv
+load_dotenv()
 
 pg_params = {
-    'host': 'localhost',
-    'database': 'postgres',
-    'user': 'postgres',
-    'password': '12345'
+    'host': os.getenv("DB_HOST"),
+    'database': os.getenv("DB_NAME"),
+    'user': os.getenv("DB_USER"),
+    'password': os.getenv("DB_PASSWORD")
 }
 
 #----------------------------------Создание нужного числа таблиц в БД
@@ -57,4 +60,4 @@ def one_or_null(one_or_null: int, shema: str, cnt: int):
     else:
         drop_tbl(shema)
 
-one_or_null(0, 'public', 20)
+one_or_null(1, 'public', 5)
