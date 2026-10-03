@@ -17,7 +17,6 @@ WHERE event_time >= (SELECT DTTM_RECORD dttm_record
 """
 
 
-
 #Выгрузка метаданных таблиц
 req_mtd_tbl_sql = Template("""
 WITH inxs_list AS (
@@ -70,17 +69,20 @@ select coalesce(max(log_hist_id), 1) from integration.confluen_docs_log
 """
 
 
-
 #Запись лога START
 ins_log_db_sql_st = Template("""
 insert into integration.confluen_docs_log(log_hist_id, log_prc_status) values({{ id }}, 'START')
 """
                      )
+
+
 #Запись лога END
 ins_log_db_sql_ed = Template("""
 insert into integration.confluen_docs_log(log_hist_id, log_prc_status) values({{ id }}, 'END')
 """
                              )
+
+
 #Запись лога ошибки
 ins_log_db_sql_er = Template("""
 insert into integration.confluen_docs_log(log_hist_id, log_prc_status, log_prc_msg) values({{ id }}, 'ERROR', '{{ msg }}')
@@ -88,12 +90,13 @@ insert into integration.confluen_docs_log(log_hist_id, log_prc_status, log_prc_m
                              )
 
 
-
 #Запись лога DONE
 ins_log_db_sql_dn = Template("""
 insert into integration.confluen_docs_log_oper(log_hist_id, log_status, schema_name) values({{ log_hist_id }}, 'DONE', '{{ schema_name }}')
 """
                               )
+
+
 #Запись лога ERROR
 ins_log_db_sql_err = Template("""
 insert into integration.confluen_docs_log_oper(log_hist_id, log_status, schema_name, tbl_name, msg_log) values({{ log_hist_id }}, 'ERROR', '{{ schema_name }}', '{{ tbl_name }}', '{{ msg_log }}')
