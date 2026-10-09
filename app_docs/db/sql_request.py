@@ -64,41 +64,20 @@ ORDER BY ordinal_position
                            )
 
 
+# Запрос на получение max_log_id
 req_max_log_id = f"""
 select coalesce(max(log_hist_id), 1) from integration.confluen_docs_log
 """
 
 
-#Запись лога START
-ins_log_db_sql_st = Template("""
-insert into integration.confluen_docs_log(log_hist_id, log_prc_status) values({{ id }}, 'START')
+# Лог процесса документирования
+ins_log_db_sql = Template("""
+insert into integration.confluen_docs_log(log_hist_id, log_prc_status, log_prc_msg) values({{ id }}, '{{ status }}', {% if status=='ERROR' %} '{{ msg }}' {% else %} {{msg}} {% endif %})
 """
-                     )
+                          )
 
 
-#Запись лога END
-ins_log_db_sql_ed = Template("""
-insert into integration.confluen_docs_log(log_hist_id, log_prc_status) values({{ id }}, 'END')
+ins_log_db_sql_oper = Template("""
+insert into integration.confluen_docs_log_oper(log_hist_id, log_status, schema_name, tbl_name, msg_log) values({{ log_hist_id }}, '{{ status }}', '{{ schema_name }}', {% if status=='ERROR' %} '{{ tbl_name }}', '{{ msg_log }}' {% else %} {{ tbl_name }}, {{ msg_log }} {% endif %})
 """
-                             )
-
-
-#Запись лога ошибки
-ins_log_db_sql_er = Template("""
-insert into integration.confluen_docs_log(log_hist_id, log_prc_status, log_prc_msg) values({{ id }}, 'ERROR', '{{ msg }}')
-"""
-                             )
-
-
-#Запись лога DONE
-ins_log_db_sql_dn = Template("""
-insert into integration.confluen_docs_log_oper(log_hist_id, log_status, schema_name) values({{ log_hist_id }}, 'DONE', '{{ schema_name }}')
-"""
-                              )
-
-
-#Запись лога ERROR
-ins_log_db_sql_err = Template("""
-insert into integration.confluen_docs_log_oper(log_hist_id, log_status, schema_name, tbl_name, msg_log) values({{ log_hist_id }}, 'ERROR', '{{ schema_name }}', '{{ tbl_name }}', '{{ msg_log }}')
-"""
-                              )
+                               )
